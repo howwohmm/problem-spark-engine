@@ -1,7 +1,5 @@
-
 export const HeroSection = () => {
-  return (
-    <section className="px-6 py-24 max-w-4xl mx-auto bg-white dark:bg-gray-900 transition-colors">
+  return <section className="max-w-4xl bg-white dark:bg-gray-900 transition-colors px-[20px] py-[130px] mx-[116px]">
       <h1 className="text-5xl font-light mb-8 text-gray-900 dark:text-white tracking-tight">
         Ideas
       </h1>
@@ -12,6 +10,5 @@ export const HeroSection = () => {
         We scan Reddit, Hacker News, and other communities to surface real problems 
         people are discussing.
       </p>
-    </section>
-  );
+    </section>;
 };
