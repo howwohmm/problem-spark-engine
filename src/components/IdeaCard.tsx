@@ -1,15 +1,8 @@
 
-import { ExternalLink, Bookmark, Users, Target, Lightbulb, Plus, X, Share2, Copy } from 'lucide-react';
+import { ExternalLink, Bookmark, Users, Target, Lightbulb, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { useState } from 'react';
 
 interface Idea {
@@ -30,7 +23,7 @@ interface IdeaCardProps {
 }
 
 export const IdeaCard = ({ idea, isBookmarked, onToggleBookmark }: IdeaCardProps) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const getSourceColor = (sourceType: string) => {
     switch (sourceType) {
@@ -50,22 +43,8 @@ export const IdeaCard = ({ idea, isBookmarked, onToggleBookmark }: IdeaCardProps
     }
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(idea.source);
-    setIsDropdownOpen(false);
-  };
-
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: idea.problem,
-        text: idea.mvpSuggestion,
-        url: idea.source,
-      });
-    } else {
-      handleCopyLink();
-    }
-    setIsDropdownOpen(false);
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded);
   };
 
   return (
@@ -93,54 +72,24 @@ export const IdeaCard = ({ idea, isBookmarked, onToggleBookmark }: IdeaCardProps
               <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-current' : ''}`} />
             </Button>
             
-            <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="p-1 h-auto text-gray-400 hover:text-orange-400"
-                >
-                  {isDropdownOpen ? (
-                    <X className="h-4 w-4" />
-                  ) : (
-                    <Plus className="h-4 w-4" />
-                  )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                align="end" 
-                className="w-48 bg-gray-800 border-gray-700"
-              >
-                <DropdownMenuItem 
-                  onClick={handleShare}
-                  className="text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer"
-                >
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share Idea
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={handleCopyLink}
-                  className="text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer"
-                >
-                  <Copy className="h-4 w-4 mr-2" />
-                  Copy Source Link
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-gray-700" />
-                <DropdownMenuItem 
-                  onClick={() => window.open(idea.source, '_blank')}
-                  className="text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer"
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  View Original Post
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleExpanded}
+              className="p-1 h-auto text-gray-400 hover:text-orange-400 transition-colors"
+            >
+              {isExpanded ? (
+                <X className="h-4 w-4" />
+              ) : (
+                <Plus className="h-4 w-4" />
+              )}
+            </Button>
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Problem */}
+        {/* Problem - Always visible */}
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Target className="h-4 w-4 text-red-400" />
@@ -151,40 +100,56 @@ export const IdeaCard = ({ idea, isBookmarked, onToggleBookmark }: IdeaCardProps
           </p>
         </div>
 
-        {/* Target User */}
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Users className="h-4 w-4 text-blue-400" />
-            <span className="text-xs font-medium text-blue-400 uppercase tracking-wide">Target User</span>
-          </div>
-          <p className="text-gray-300">
-            {idea.targetUser}
-          </p>
-        </div>
+        {/* Expandable content */}
+        {isExpanded && (
+          <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
+            {/* Target User */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Users className="h-4 w-4 text-blue-400" />
+                <span className="text-xs font-medium text-blue-400 uppercase tracking-wide">Target User</span>
+              </div>
+              <p className="text-gray-300">
+                {idea.targetUser}
+              </p>
+            </div>
 
-        {/* MVP Suggestion */}
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Lightbulb className="h-4 w-4 text-green-400" />
-            <span className="text-xs font-medium text-green-400 uppercase tracking-wide">MVP Idea</span>
-          </div>
-          <p className="text-gray-300 leading-relaxed">
-            {idea.mvpSuggestion}
-          </p>
-        </div>
+            {/* MVP Suggestion */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Lightbulb className="h-4 w-4 text-green-400" />
+                <span className="text-xs font-medium text-green-400 uppercase tracking-wide">MVP Idea</span>
+              </div>
+              <p className="text-gray-300 leading-relaxed">
+                {idea.mvpSuggestion}
+              </p>
+            </div>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2">
-          {idea.tags.map(tag => (
-            <Badge 
-              key={tag} 
-              variant="secondary"
-              className="bg-gray-800 text-gray-300 hover:bg-gray-700 text-xs"
-            >
-              {tag}
-            </Badge>
-          ))}
-        </div>
+            {/* Tags */}
+            <div className="flex flex-wrap gap-2">
+              {idea.tags.map(tag => (
+                <Badge 
+                  key={tag} 
+                  variant="secondary"
+                  className="bg-gray-800 text-gray-300 hover:bg-gray-700 text-xs"
+                >
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+
+            {/* Source Link */}
+            <div className="pt-2 border-t border-gray-700">
+              <button
+                onClick={() => window.open(idea.source, '_blank')}
+                className="flex items-center gap-2 text-sm text-gray-400 hover:text-orange-400 transition-colors group"
+              >
+                <ExternalLink className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                View Original Post
+              </button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
