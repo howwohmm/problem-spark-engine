@@ -1,6 +1,4 @@
-
 import { useState, useMemo, useRef } from 'react';
-import { Header } from '@/components/Header';
 import { HeroSection } from '@/components/HeroSection';
 import { SearchFilters } from '@/components/SearchFilters';
 import { IdeaList } from '@/components/IdeaList';
@@ -88,7 +86,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background transition-colors">
-      <Header />
       <HeroSection />
       <SearchFilters
         searchTerm={searchTerm}

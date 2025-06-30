@@ -1,9 +1,9 @@
-
-import { Search, Filter, ChevronDown } from 'lucide-react';
+import { Search, Filter, ChevronDown, Sun, Moon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useState, useRef, useEffect } from 'react';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface SearchFiltersProps {
   searchTerm: string;
@@ -47,6 +47,8 @@ export const SearchFilters = ({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const sortDropdownRef = useRef<HTMLDivElement>(null);
   const sourceDropdownRef = useRef<HTMLDivElement>(null);
+  
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleFocusSearch = () => {
@@ -87,18 +89,35 @@ export const SearchFilters = ({
   return (
     <section className="max-w-4xl mx-auto px-6 py-8 bg-background border-t border-border">
       <div className="space-y-6">
-        {/* Search */}
-        <div className="max-w-md">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              ref={searchInputRef}
-              placeholder="Search ideas... (⌘K)"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-10 bg-background border-border focus:border-ring focus:ring-1 focus:ring-ring"
-            />
+        {/* Search and Theme Toggle Row */}
+        <div className="flex items-center justify-between">
+          <div className="max-w-md">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                ref={searchInputRef}
+                placeholder="Search ideas... (⌘K)"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-10 bg-background border-border focus:border-ring focus:ring-1 focus:ring-ring"
+              />
+            </div>
           </div>
+
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-accent"
+          >
+            {theme === 'light' ? (
+              <Moon className="h-4 w-4" />
+            ) : (
+              <Sun className="h-4 w-4" />
+            )}
+            <span className="sr-only">Toggle theme</span>
+          </Button>
         </div>
 
         {/* Filters Row */}
