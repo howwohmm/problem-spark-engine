@@ -157,9 +157,8 @@ export const IdeaList = ({
                   )}
                 </div>
 
-                {/* Expand/Collapse and Bookmark buttons */}
+                {/* Only Expand/Collapse button - Removed redundant bookmark button */}
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  {/* Expand/Collapse button */}
                   <Button
                     variant="ghost"
                     size="sm"
@@ -171,22 +170,6 @@ export const IdeaList = ({
                     ) : (
                       <Plus className="h-4 w-4" />
                     )}
-                  </Button>
-
-                  {/* Bookmark button */}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onToggleBookmark(idea.id)}
-                    className={`h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity ${
-                      bookmarkedIds.includes(idea.id)
-                        ? 'text-foreground opacity-100'
-                        : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    <Plus className={`h-4 w-4 transform transition-transform ${
-                      bookmarkedIds.includes(idea.id) ? 'rotate-45' : ''
-                    }`} />
                   </Button>
                 </div>
               </div>
