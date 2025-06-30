@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Mail, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const EmailSignup = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +11,6 @@ export const EmailSignup = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      // For MVP, just simulate success
       console.log('Email signup:', email);
       setIsSubmitted(true);
       setTimeout(() => {
@@ -23,60 +21,56 @@ export const EmailSignup = () => {
   };
 
   return (
-    <section id="digest" className="px-6 py-16 bg-gray-900">
-      <div className="max-w-4xl mx-auto">
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-orange-400 to-amber-500 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Mail className="h-8 w-8 text-gray-900" />
-            </div>
-            <CardTitle className="text-2xl font-bold text-gray-100">
+    <section id="digest" className="border-t border-gray-200 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="max-w-2xl">
+          <div className="mb-8">
+            <h2 className="text-3xl font-normal text-gray-900 mb-4">
               Weekly Problem Digest
-            </CardTitle>
-            <p className="text-gray-400 mt-2">
+            </h2>
+            <p className="text-gray-600 leading-relaxed">
               Get the top 10 build-ready ideas delivered to your inbox every Monday. 
               Curated, processed, and ready for execution.
             </p>
-          </CardHeader>
+          </div>
 
-          <CardContent>
-            {isSubmitted ? (
-              <div className="text-center py-8">
-                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Send className="h-6 w-6 text-white" />
+          {isSubmitted ? (
+            <div className="py-8">
+              <div className="flex items-center gap-3 text-green-700 mb-4">
+                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                  <Send className="h-4 w-4" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-100 mb-2">You're all set!</h3>
-                <p className="text-gray-400">
-                  We'll send you the best startup ideas every Monday morning.
-                </p>
+                <h3 className="text-lg font-medium">You're all set!</h3>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex gap-4 max-w-md mx-auto">
-                <Input
-                  type="email"
-                  placeholder="your.email@domain.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 bg-gray-900 border-gray-600 text-gray-100 placeholder-gray-400"
-                  required
-                />
-                <Button 
-                  type="submit"
-                  className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white"
-                >
-                  <Send className="h-4 w-4 mr-2" />
-                  Subscribe
-                </Button>
-              </form>
-            )}
-
-            <div className="flex items-center justify-center gap-6 mt-6 text-xs text-gray-500">
-              <span>📧 Weekly delivery</span>
-              <span>🚫 No spam ever</span>
-              <span>⚡ Unsubscribe anytime</span>
+              <p className="text-gray-600">
+                We'll send you the best startup ideas every Monday morning.
+              </p>
             </div>
-          </CardContent>
-        </Card>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex gap-3 max-w-md">
+              <Input
+                type="email"
+                placeholder="your.email@domain.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:border-gray-900 focus:ring-gray-900"
+                required
+              />
+              <Button 
+                type="submit"
+                className="bg-gray-900 hover:bg-gray-800 text-white border-0"
+              >
+                Subscribe
+              </Button>
+            </form>
+          )}
+
+          <div className="flex items-center gap-6 mt-6 text-xs text-gray-500">
+            <span>📧 Weekly delivery</span>
+            <span>🚫 No spam ever</span>
+            <span>⚡ Unsubscribe anytime</span>
+          </div>
+        </div>
       </div>
     </section>
   );

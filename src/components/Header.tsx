@@ -1,42 +1,76 @@
 
 import { useState } from 'react';
-import { Bookmark, Menu, X } from 'lucide-react';
+import { Search, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export const Header = () => {
-  const [showBookmarks, setShowBookmarks] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
-    <header className="px-6 py-4 border-b border-gray-800">
-      <div className="max-w-6xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-amber-500 rounded-lg flex items-center justify-center">
-            <span className="text-gray-900 font-bold text-sm">PM</span>
+    <header className="border-b border-gray-200 bg-white">
+      <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center">
+            <div className="text-2xl font-normal text-gray-900">
+              PromptMine
+            </div>
           </div>
-          <span className="font-semibold text-gray-100">PromptMine</span>
-        </div>
 
-        <nav className="hidden md:flex items-center gap-6">
-          <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors">
-            Browse Ideas
-          </a>
-          <a href="#digest" className="text-gray-300 hover:text-orange-400 transition-colors">
-            Weekly Digest
-          </a>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-8">
+            <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+              Browse Ideas
+            </a>
+            <a href="#digest" className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+              Weekly Digest
+            </a>
+            <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+              Docs
+            </a>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="border-gray-300 text-gray-700 hover:border-gray-900 hover:text-gray-900"
+            >
+              Console
+            </Button>
+          </nav>
+
+          {/* Mobile Menu Button */}
           <Button 
             variant="ghost" 
-            size="sm"
-            onClick={() => setShowBookmarks(!showBookmarks)}
-            className="text-gray-300 hover:text-orange-400"
+            size="sm" 
+            className="md:hidden text-gray-600 hover:text-gray-900"
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
           >
-            <Bookmark className="h-4 w-4 mr-2" />
-            Bookmarks
+            {showMobileMenu ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
-        </nav>
+        </div>
 
-        <Button variant="ghost" size="sm" className="md:hidden">
-          <Menu className="h-5 w-5" />
-        </Button>
+        {/* Mobile Navigation */}
+        {showMobileMenu && (
+          <nav className="md:hidden mt-4 pt-4 border-t border-gray-200">
+            <div className="flex flex-col gap-4">
+              <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+                Browse Ideas
+              </a>
+              <a href="#digest" className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+                Weekly Digest
+              </a>
+              <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+                Docs
+              </a>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="border-gray-300 text-gray-700 hover:border-gray-900 hover:text-gray-900 w-fit"
+              >
+                Console
+              </Button>
+            </div>
+          </nav>
+        )}
       </div>
     </header>
   );
