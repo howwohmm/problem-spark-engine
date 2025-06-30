@@ -56,12 +56,14 @@ export const SearchFilters = ({
           <SourceFilter sourceFilter={sourceFilter} setSourceFilter={setSourceFilter} />
         </div>
 
-        {/* Filter Tags */}
-        <FilterTags 
-          allTags={allTags} 
-          selectedTags={selectedTags} 
-          onToggleTag={onToggleTag} 
-        />
+        {/* Filter Tags - Hidden on mobile, visible on desktop */}
+        <div className="hidden sm:block">
+          <FilterTags 
+            allTags={allTags} 
+            selectedTags={selectedTags} 
+            onToggleTag={onToggleTag} 
+          />
+        </div>
 
         {/* Results count and shortcuts */}
         <FilterActions 
