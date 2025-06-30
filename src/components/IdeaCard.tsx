@@ -1,8 +1,16 @@
 
-import { ExternalLink, Bookmark, Users, Target, Lightbulb } from 'lucide-react';
+import { ExternalLink, Bookmark, Users, Target, Lightbulb, Plus, X, Share2, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useState } from 'react';
 
 interface Idea {
   id: string;
@@ -22,6 +30,8 @@ interface IdeaCardProps {
 }
 
 export const IdeaCard = ({ idea, isBookmarked, onToggleBookmark }: IdeaCardProps) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const getSourceColor = (sourceType: string) => {
     switch (sourceType) {
       case 'reddit': return 'text-orange-500';
@@ -40,6 +50,24 @@ export const IdeaCard = ({ idea, isBookmarked, onToggleBookmark }: IdeaCardProps
     }
   };
 
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(idea.source);
+    setIsDropdownOpen(false);
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: idea.problem,
+        text: idea.mvpSuggestion,
+        url: idea.source,
+      });
+    } else {
+      handleCopyLink();
+    }
+    setIsDropdownOpen(false);
+  };
+
   return (
     <Card className="bg-gray-900 border-gray-700 hover:border-gray-600 transition-all duration-200 hover:shadow-lg hover:shadow-orange-500/10">
       <CardHeader className="pb-3">
@@ -51,18 +79,63 @@ export const IdeaCard = ({ idea, isBookmarked, onToggleBookmark }: IdeaCardProps
             <span>•</span>
             <span>{idea.timestamp}</span>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onToggleBookmark}
-            className={`p-1 h-auto ${
-              isBookmarked 
-                ? 'text-orange-400 hover:text-orange-500' 
-                : 'text-gray-400 hover:text-orange-400'
-            }`}
-          >
-            <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-current' : ''}`} />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onToggleBookmark}
+              className={`p-1 h-auto ${
+                isBookmarked 
+                  ? 'text-orange-400 hover:text-orange-500' 
+                  : 'text-gray-400 hover:text-orange-400'
+              }`}
+            >
+              <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-current' : ''}`} />
+            </Button>
+            
+            <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="p-1 h-auto text-gray-400 hover:text-orange-400"
+                >
+                  {isDropdownOpen ? (
+                    <X className="h-4 w-4" />
+                  ) : (
+                    <Plus className="h-4 w-4" />
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="end" 
+                className="w-48 bg-gray-800 border-gray-700"
+              >
+                <DropdownMenuItem 
+                  onClick={handleShare}
+                  className="text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer"
+                >
+                  <Share2 className="h-4 w-4 mr-2" />
+                  Share Idea
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={handleCopyLink}
+                  className="text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer"
+                >
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copy Source Link
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-gray-700" />
+                <DropdownMenuItem 
+                  onClick={() => window.open(idea.source, '_blank')}
+                  className="text-gray-300 hover:text-white hover:bg-gray-700 cursor-pointer"
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  View Original Post
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </CardHeader>
 
@@ -111,19 +184,6 @@ export const IdeaCard = ({ idea, isBookmarked, onToggleBookmark }: IdeaCardProps
               {tag}
             </Badge>
           ))}
-        </div>
-
-        {/* Source Link */}
-        <div className="pt-2 border-t border-gray-800">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-gray-400 hover:text-orange-400 p-0 h-auto"
-            onClick={() => window.open(idea.source, '_blank')}
-          >
-            <ExternalLink className="h-3 w-3 mr-2" />
-            View Original Post
-          </Button>
         </div>
       </CardContent>
     </Card>
