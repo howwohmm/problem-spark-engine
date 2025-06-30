@@ -33,14 +33,14 @@ export const SortDropdown = ({ sortBy, setSortBy }: SortDropdownProps) => {
       <Button
         variant="outline"
         onClick={() => setShowDropdown(!showDropdown)}
-        className="h-10 bg-background border-border hover:bg-accent"
+        className="h-9 px-4 rounded-full bg-background border-border hover:bg-accent text-foreground text-sm font-normal"
       >
         {sortOptions.find(opt => opt.value === sortBy)?.label || 'Sort'}
         <ChevronDown className="ml-2 h-4 w-4" />
       </Button>
       
       {showDropdown && (
-        <div className="absolute top-full mt-1 w-48 bg-background border border-border rounded-md shadow-lg z-50">
+        <div className="absolute top-full mt-2 w-48 bg-background border border-border rounded-xl shadow-lg z-50 overflow-hidden">
           {sortOptions.map((option) => (
             <button
               key={option.value}
@@ -48,8 +48,8 @@ export const SortDropdown = ({ sortBy, setSortBy }: SortDropdownProps) => {
                 setSortBy(option.value);
                 setShowDropdown(false);
               }}
-              className={`w-full text-left px-3 py-2 hover:bg-accent transition-colors text-sm ${
-                sortBy === option.value ? 'bg-accent text-foreground' : 'text-muted-foreground'
+              className={`w-full text-left px-4 py-3 hover:bg-accent transition-colors text-sm ${
+                sortBy === option.value ? 'bg-accent text-foreground font-medium' : 'text-muted-foreground'
               }`}
             >
               {option.label}

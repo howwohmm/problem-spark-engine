@@ -11,18 +11,17 @@ export const FilterTags = ({ allTags, selectedTags, onToggleTag }: FilterTagsPro
   return (
     <div className="flex flex-wrap gap-2">
       {allTags.map((tag) => (
-        <Badge
+        <button
           key={tag}
-          variant="outline"
-          className={`cursor-pointer transition-all text-xs px-3 py-1 ${
-            selectedTags.includes(tag)
-              ? 'bg-primary text-primary-foreground border-primary'
-              : 'bg-background text-muted-foreground border-border hover:border-ring hover:text-foreground'
-          }`}
           onClick={() => onToggleTag(tag)}
+          className={`px-4 py-2 rounded-full text-sm font-normal transition-all border ${
+            selectedTags.includes(tag)
+              ? 'bg-accent text-foreground border-ring'
+              : 'bg-background text-muted-foreground border-border hover:border-ring hover:text-foreground hover:bg-accent/50'
+          }`}
         >
           {tag}
-        </Badge>
+        </button>
       ))}
     </div>
   );
