@@ -1,3 +1,4 @@
+
 import { useState, useMemo, useRef } from 'react';
 import { HeroSection } from '@/components/HeroSection';
 import { SearchFilters } from '@/components/SearchFilters';
@@ -86,15 +87,15 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background transition-colors">
-      <div className="w-full px-6 py-12">
+      <div className="w-full px-4 sm:px-6 py-8 sm:py-12">
         <div className="max-w-none">
-          <h1 className="text-6xl font-bold text-foreground mb-4">
+          <h1 className="text-4xl sm:text-6xl font-bold text-foreground mb-3 sm:mb-4">
             Ideas
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl">
+          <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl">
             Turn community noise into build-ready ideas
           </p>
-          <p className="text-lg text-muted-foreground mb-12 max-w-3xl">
+          <p className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-12 max-w-3xl">
             We scan Reddit, Hacker News, and other communities to surface real problems people are discussing.
           </p>
         </div>
@@ -111,17 +112,17 @@ const Index = () => {
         sourceFilter={sourceFilter}
         setSourceFilter={setSourceFilter}
       />
-      <div className="w-full px-6">
+      <div className="w-full px-4 sm:px-6">
         <IdeaList
           ideas={filteredAndSortedIdeas}
           bookmarkedIds={bookmarkedIds}
           onToggleBookmark={toggleBookmark}
         />
       </div>
-      <div className="w-full px-6">
+      <div className="w-full px-4 sm:px-6">
         <EmailSignup />
       </div>
-      <div className="w-full px-6">
+      <div className="w-full px-4 sm:px-6">
         <Footer />
       </div>
     </div>

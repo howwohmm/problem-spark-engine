@@ -40,16 +40,18 @@ export const SearchFilters = ({
   const hasActiveFilters = searchTerm.length > 0 || selectedTags.length > 0 || sourceFilter.length > 0;
 
   return (
-    <section className="w-full px-6 py-8 bg-background border-t border-border">
-      <div className="w-full space-y-6">
+    <section className="w-full px-4 sm:px-6 py-6 sm:py-8 bg-background border-t border-border">
+      <div className="w-full space-y-4 sm:space-y-6">
         {/* Search and Theme Toggle Row */}
-        <div className="flex items-center justify-between">
-          <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex-1 max-w-md">
+            <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          </div>
           <ThemeToggle />
         </div>
 
         {/* Filters Row */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <SortDropdown sortBy={sortBy} setSortBy={setSortBy} />
           <SourceFilter sourceFilter={sourceFilter} setSourceFilter={setSourceFilter} />
         </div>
