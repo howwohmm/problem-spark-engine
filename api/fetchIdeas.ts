@@ -1,9 +1,8 @@
 
-import { NextApiRequest, NextApiResponse } from 'next'
 import snoowrap from 'snoowrap'
 import axios from 'axios'
-import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { summarize } from '@/lib/gemini'
+import { supabaseAdmin } from '../src/lib/supabaseAdmin'
+import { summarize } from '../src/lib/gemini'
 
 const reddit = new snoowrap({
   userAgent: 'ideaohm',
@@ -13,7 +12,7 @@ const reddit = new snoowrap({
   password: process.env.REDDIT_PASS!
 })
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: any, res: any) {
   try {
     const ideas: any[] = []
     
