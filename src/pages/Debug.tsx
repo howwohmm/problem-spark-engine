@@ -33,23 +33,24 @@ const Debug = () => {
 
   const testFetchIdeasAPI = async () => {
     try {
-      console.log('Testing fetchIdeas API...');
+      console.log('Testing fetchIdeas Edge Function...');
       setLoading(true);
       
-      const response = await fetch('/api/fetchIdeas', {
+      const { data, error } = await supabase.functions.invoke('fetch-ideas', {
         method: 'POST',
       });
       
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      if (error) {
+        setTestResults(prev => ({
+          ...prev,
+          fetchAPI: { success: false, error: error.message }
+        }));
+      } else {
+        setTestResults(prev => ({
+          ...prev,
+          fetchAPI: { success: true, result: data }
+        }));
       }
-      
-      const result = await response.json();
-      
-      setTestResults(prev => ({
-        ...prev,
-        fetchAPI: { success: true, result }
-      }));
     } catch (err: any) {
       setTestResults(prev => ({
         ...prev,
@@ -96,7 +97,7 @@ const Debug = () => {
                 {testResults.supabase.success ? (
                   <div>
                     <p>Found {testResults.supabase.count} ideas in database</p>
-                    {testResults.supabase.sample && testResults.supabase.sample.length > 0 && (
+                    {testResults.supabase.sample && testResults.subabase.sample.length > 0 && (
                       <details className="mt-2">
                         <summary>Sample data:</summary>
                         <pre className="text-xs mt-2 bg-gray-100 p-2 rounded">
@@ -114,7 +115,7 @@ const Debug = () => {
 
           {/* Test API Endpoint */}
           <div className="border rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">2. Test Data Fetching API</h2>
+            <h2 className="text-xl font-semibold mb-4">2. Test Data Fetching (Edge Function)</h2>
             <p className="text-sm text-gray-600 mb-4">
               This will fetch data from Reddit/HN, process with Gemini, and store in database
             </p>
@@ -129,11 +130,12 @@ const Debug = () => {
             {testResults.fetchAPI && (
               <div className={`p-4 rounded ${testResults.fetchAPI.success ? 'bg-green-100' : 'bg-red-100'}`}>
                 <h3 className="font-semibold">
-                  {testResults.fetchAPI.success ? '✅ API Working' : '❌ API Failed'}
+                  {testResults.fetchAPI.success ? '✅ Edge Function Working' : '❌ Edge Function Failed'}
                 </h3>
                 {testResults.fetchAPI.success ? (
                   <div>
                     <p>Status: {testResults.fetchAPI.result.status}</p>
+                    <p>Total Collected: {testResults.fetchAPI.result.total_collected}</p>
                     <p>Processed: {testResults.fetchAPI.result.processed} items</p>
                     <p>Inserted: {testResults.fetchAPI.result.inserted} ideas</p>
                   </div>
@@ -162,14 +164,14 @@ const Debug = () => {
             <h2 className="text-xl font-semibold mb-4">How This Should Work:</h2>
             <ol className="list-decimal list-inside space-y-2 text-sm">
               <li><strong>Database Test:</strong> Should connect and show current idea count</li>
-              <li><strong>API Test:</strong> Should fetch from Reddit/HN, process with Gemini, store results</li>
+              <li><strong>Edge Function Test:</strong> Should fetch from Reddit/HN, process with Gemini, store results</li>
               <li><strong>Check main site:</strong> Go back to homepage to see new ideas displayed</li>
             </ol>
             
             <div className="mt-4 p-4 bg-yellow-100 rounded">
-              <h3 className="font-semibold">Current Cron Schedule:</h3>
-              <p>Your API runs automatically every 6 hours (vercel.json)</p>
-              <p>Use the test button above to manually trigger it now</p>
+              <h3 className="font-semibold">Current Setup:</h3>
+              <p>Your system now uses Supabase Edge Functions instead of traditional API routes</p>
+              <p>The edge function runs automatically every 6 hours, or you can trigger it manually above</p>
             </div>
           </div>
         </div>
