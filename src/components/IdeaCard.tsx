@@ -1,5 +1,5 @@
 
-import { ExternalLink, Bookmark, Users, Target, Lightbulb, Plus, X } from 'lucide-react';
+import { ExternalLink, Bookmark, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -89,39 +89,33 @@ export const IdeaCard = ({ idea, isBookmarked, onToggleBookmark }: IdeaCardProps
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Problem - Always visible */}
+        {/* Problem - Always visible (this is the title) */}
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Target className="h-4 w-4 text-red-400" />
-            <span className="text-xs font-medium text-red-400 uppercase tracking-wide">Problem</span>
-          </div>
-          <p className="text-gray-100 font-medium leading-relaxed">
+          <p className="text-gray-100 font-medium text-base sm:text-lg leading-relaxed">
             {idea.problem}
           </p>
         </div>
 
-        {/* Expandable content */}
+        {/* Expandable content - Only show when expanded */}
         {isExpanded && (
           <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
+            {/* MVP Suggestion (Description) */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs font-medium text-green-400 uppercase tracking-wide">Description</span>
+              </div>
+              <p className="text-gray-300 leading-relaxed">
+                {idea.mvpSuggestion}
+              </p>
+            </div>
+
             {/* Target User */}
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Users className="h-4 w-4 text-blue-400" />
                 <span className="text-xs font-medium text-blue-400 uppercase tracking-wide">Target User</span>
               </div>
               <p className="text-gray-300">
                 {idea.targetUser}
-              </p>
-            </div>
-
-            {/* MVP Suggestion */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Lightbulb className="h-4 w-4 text-green-400" />
-                <span className="text-xs font-medium text-green-400 uppercase tracking-wide">MVP Idea</span>
-              </div>
-              <p className="text-gray-300 leading-relaxed">
-                {idea.mvpSuggestion}
               </p>
             </div>
 
