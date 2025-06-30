@@ -1,5 +1,5 @@
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { Header } from '@/components/Header';
 import { HeroSection } from '@/components/HeroSection';
 import { SearchFilters } from '@/components/SearchFilters';
@@ -7,11 +7,18 @@ import { IdeaList } from '@/components/IdeaList';
 import { EmailSignup } from '@/components/EmailSignup';
 import { Footer } from '@/components/Footer';
 import { mockIdeas } from '@/data/mockIdeas';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useTheme } from '@/contexts/ThemeContext';
+import { useBookmarks } from '@/contexts/BookmarkContext';
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [bookmarkedIds, setBookmarkedIds] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState('newest');
+  const [sourceFilter, setSourceFilter] = useState<string[]>([]);
+  
+  const { toggleTheme } = useTheme();
+  const { bookmarkedIds, toggleBookmark } = useBookmarks();
 
   // Get all unique tags from ideas
   const allTags = useMemo(() => {
@@ -20,9 +27,9 @@ const Index = () => {
     return Array.from(tags).sort().slice(0, 8); // Show only first 8 tags for cleaner look
   }, []);
 
-  // Filter ideas based on search and tags
-  const filteredIdeas = useMemo(() => {
-    return mockIdeas.filter(idea => {
+  // Filter and sort ideas
+  const filteredAndSortedIdeas = useMemo(() => {
+    let filtered = mockIdeas.filter(idea => {
       const matchesSearch = searchTerm === '' || 
         idea.problem.toLowerCase().includes(searchTerm.toLowerCase()) ||
         idea.mvpSuggestion.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -31,9 +38,28 @@ const Index = () => {
       const matchesTags = selectedTags.length === 0 || 
         selectedTags.some(tag => idea.tags.includes(tag));
       
-      return matchesSearch && matchesTags;
+      const matchesSource = sourceFilter.length === 0 ||
+        sourceFilter.includes(idea.sourceType);
+      
+      return matchesSearch && matchesTags && matchesSource;
     });
-  }, [searchTerm, selectedTags]);
+
+    // Sort the filtered results
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'oldest':
+          return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+        case 'popular':
+          // For now, sort by number of tags as a proxy for popularity
+          return b.tags.length - a.tags.length;
+        case 'newest':
+        default:
+          return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+      }
+    });
+
+    return filtered;
+  }, [searchTerm, selectedTags, sourceFilter, sortBy]);
 
   const toggleTag = (tag: string) => {
     setSelectedTags(prev => 
@@ -43,27 +69,25 @@ const Index = () => {
     );
   };
 
-  const toggleBookmark = (ideaId: string) => {
-    setBookmarkedIds(prev => {
-      const newBookmarks = prev.includes(ideaId) 
-        ? prev.filter(id => id !== ideaId)
-        : [...prev, ideaId];
-      
-      localStorage.setItem('promptmine-bookmarks', JSON.stringify(newBookmarks));
-      return newBookmarks;
-    });
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedTags([]);
+    setSourceFilter([]);
   };
 
-  // Load bookmarks from localStorage on mount
-  useState(() => {
-    const saved = localStorage.getItem('promptmine-bookmarks');
-    if (saved) {
-      setBookmarkedIds(JSON.parse(saved));
-    }
+  const focusSearch = () => {
+    window.dispatchEvent(new Event('focusSearch'));
+  };
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    onSearch: focusSearch,
+    onToggleTheme: toggleTheme,
+    onClearFilters: clearFilters
   });
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
       <Header />
       <HeroSection />
       <SearchFilters
@@ -72,10 +96,14 @@ const Index = () => {
         selectedTags={selectedTags}
         allTags={allTags}
         onToggleTag={toggleTag}
-        resultCount={filteredIdeas.length}
+        resultCount={filteredAndSortedIdeas.length}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        sourceFilter={sourceFilter}
+        setSourceFilter={setSourceFilter}
       />
       <IdeaList
-        ideas={filteredIdeas}
+        ideas={filteredAndSortedIdeas}
         bookmarkedIds={bookmarkedIds}
         onToggleBookmark={toggleBookmark}
       />
