@@ -41,7 +41,7 @@ export const SearchFilters = ({
 
   return (
     <section className="w-full px-6 py-8 bg-background border-t border-border">
-      <div className="max-w-none space-y-6">
+      <div className="w-full space-y-6">
         {/* Search and Theme Toggle Row */}
         <div className="flex items-center justify-between">
           <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />

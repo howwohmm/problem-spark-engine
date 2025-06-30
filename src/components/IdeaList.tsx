@@ -37,8 +37,8 @@ export const IdeaList = ({
 
   if (ideas.length === 0) {
     return (
-      <section className="max-w-4xl mx-auto px-6 py-24 bg-background">
-        <div className="text-center">
+      <section className="w-full py-24 bg-background">
+        <div className="text-left">
           <p className="text-muted-foreground text-lg">No ideas match your search</p>
           <p className="text-muted-foreground mt-2">Try adjusting your filters</p>
         </div>
@@ -47,7 +47,7 @@ export const IdeaList = ({
   }
 
   return (
-    <section className="max-w-4xl mx-auto px-6 pb-24 bg-background">
+    <section className="w-full pb-24 bg-background">
       <div className="space-y-0">
         {displayedItems.map((idea) => (
           <div
@@ -133,7 +133,7 @@ export const IdeaList = ({
 
       {/* Load more button */}
       {hasMore && (
-        <div className="flex justify-center mt-12">
+        <div className="flex justify-left mt-12">
           <Button
             onClick={loadMore}
             variant="outline"
