@@ -1,8 +1,8 @@
 
 export const Footer = () => {
   return (
-    <footer className="border-t border-border px-6 py-8 text-center bg-background">
-      <p className="text-muted-foreground text-sm">Ideas, curated by Ohm.</p>
+    <footer className="border-t border-border px-6 py-8 bg-background">
+      <p className="text-muted-foreground text-sm max-w-4xl mx-auto">Ideas, curated by Ohm.</p>
     </footer>
   );
 };
