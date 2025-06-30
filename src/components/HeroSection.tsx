@@ -1,7 +1,5 @@
-
 export const HeroSection = () => {
-  return (
-    <section className="max-w-4xl mx-auto px-6 py-20 bg-background transition-colors">
+  return <section className="max-w-4xl mx-auto py-20 bg-background transition-colors px-[24px]">
       <div className="text-center space-y-6">
         <h1 className="text-5xl font-medium mb-4 text-foreground tracking-tight">
           Ideas
@@ -14,6 +12,5 @@ export const HeroSection = () => {
           people are discussing.
         </p>
       </div>
-    </section>
-  );
+    </section>;
 };
