@@ -33,15 +33,15 @@ export const SearchFilters = ({
 }: SearchFiltersProps) => {
   const clearAllFilters = () => {
     setSearchTerm('');
-    onToggleTag('');
+    selectedTags.forEach(tag => onToggleTag(tag));
     setSourceFilter([]);
   };
 
   const hasActiveFilters = searchTerm || selectedTags.length > 0 || sourceFilter.length > 0;
 
   return (
-    <section className="max-w-4xl mx-auto px-6 py-8 bg-background border-t border-border">
-      <div className="space-y-6">
+    <section className="w-full px-6 py-8 bg-background border-t border-border">
+      <div className="max-w-none space-y-6">
         {/* Search and Theme Toggle Row */}
         <div className="flex items-center justify-between">
           <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />

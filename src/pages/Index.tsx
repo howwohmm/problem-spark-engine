@@ -86,7 +86,19 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background transition-colors">
-      <HeroSection />
+      <div className="w-full px-6 py-12">
+        <div className="max-w-none">
+          <h1 className="text-6xl font-bold text-foreground mb-4">
+            Ideas
+          </h1>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl">
+            Turn community noise into build-ready ideas
+          </p>
+          <p className="text-lg text-muted-foreground mb-12 max-w-3xl">
+            We scan Reddit, Hacker News, and other communities to surface real problems people are discussing.
+          </p>
+        </div>
+      </div>
       <SearchFilters
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -99,13 +111,19 @@ const Index = () => {
         sourceFilter={sourceFilter}
         setSourceFilter={setSourceFilter}
       />
-      <IdeaList
-        ideas={filteredAndSortedIdeas}
-        bookmarkedIds={bookmarkedIds}
-        onToggleBookmark={toggleBookmark}
-      />
-      <EmailSignup />
-      <Footer />
+      <div className="w-full px-6">
+        <IdeaList
+          ideas={filteredAndSortedIdeas}
+          bookmarkedIds={bookmarkedIds}
+          onToggleBookmark={toggleBookmark}
+        />
+      </div>
+      <div className="w-full px-6">
+        <EmailSignup />
+      </div>
+      <div className="w-full px-6">
+        <Footer />
+      </div>
     </div>
   );
 };
