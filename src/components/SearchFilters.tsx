@@ -37,7 +37,7 @@ export const SearchFilters = ({
     setSourceFilter([]);
   };
 
-  const hasActiveFilters = searchTerm || selectedTags.length > 0 || sourceFilter.length > 0;
+  const hasActiveFilters = searchTerm.length > 0 || selectedTags.length > 0 || sourceFilter.length > 0;
 
   return (
     <section className="w-full px-6 py-8 bg-background border-t border-border">
