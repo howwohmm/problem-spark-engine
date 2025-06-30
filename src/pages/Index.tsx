@@ -87,7 +87,7 @@ const Index = () => {
   });
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
+    <div className="min-h-screen bg-background transition-colors">
       <Header />
       <HeroSection />
       <SearchFilters
