@@ -1,7 +1,9 @@
+
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+
 interface Idea {
   id: string;
   problem: string;
@@ -12,11 +14,13 @@ interface Idea {
   tags: string[];
   timestamp: string;
 }
+
 interface IdeaListProps {
   ideas: Idea[];
   bookmarkedIds: string[];
   onToggleBookmark: (ideaId: string) => void;
 }
+
 export const IdeaList = ({
   ideas,
   bookmarkedIds,
@@ -30,78 +34,115 @@ export const IdeaList = ({
     items: ideas,
     itemsPerPage: 10
   });
+
   if (ideas.length === 0) {
-    return <section className="px-6 pb-24 max-w-7xl mx-auto bg-white dark:bg-gray-900 transition-colors">
-        <div className="py-24 text-center">
-          <p className="text-gray-500 dark:text-gray-400 text-lg font-light">No ideas match your search</p>
-          <p className="text-gray-400 dark:text-gray-500 mt-2 font-light">Try adjusting your filters</p>
+    return (
+      <section className="max-w-4xl mx-auto px-6 py-24 bg-background">
+        <div className="text-center">
+          <p className="text-muted-foreground text-lg">No ideas match your search</p>
+          <p className="text-muted-foreground mt-2">Try adjusting your filters</p>
         </div>
-      </section>;
+      </section>
+    );
   }
-  return <section className="px-6 pb-24 max-w-7xl mx-auto transition-colors bg-zinc-900">
+
+  return (
+    <section className="max-w-4xl mx-auto px-6 pb-24 bg-background">
       <div className="space-y-0">
-        {displayedItems.map(idea => <div key={idea.id} className="py-8 border-b border-gray-100 dark:border-gray-800 last:border-b-0 group">
-            <div className="flex gap-8 items-start">
-              {/* Date - Fixed width */}
-              <div className="w-20 flex-shrink-0">
-                <div className="text-sm text-gray-400 dark:text-gray-500 font-light">
+        {displayedItems.map((idea) => (
+          <div
+            key={idea.id}
+            className="py-8 border-b border-border last:border-b-0 group"
+          >
+            <div className="flex gap-6 items-start">
+              {/* Date */}
+              <div className="w-16 flex-shrink-0">
+                <div className="text-xs text-muted-foreground">
                   {idea.timestamp}
                 </div>
               </div>
 
-              {/* Main Content - Takes remaining space */}
-              <div className="flex-1 min-w-0 space-y-4">
+              {/* Main Content */}
+              <div className="flex-1 min-w-0 space-y-3">
                 {/* Problem */}
                 <div>
-                  <h3 className="text-xl font-light text-gray-900 dark:text-white leading-relaxed mb-3">
+                  <h3 className="text-lg font-medium text-foreground leading-relaxed mb-2">
                     {idea.problem}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed font-light">
+                  <p className="text-muted-foreground leading-relaxed">
                     {idea.mvpSuggestion}
                   </p>
                 </div>
                 
                 {/* Target User */}
                 <div>
-                  <p className="text-gray-500 dark:text-gray-400 font-light leading-relaxed">
-                    <span className="text-gray-400 dark:text-gray-500 text-sm uppercase tracking-wide mr-2">For:</span>
+                  <p className="text-muted-foreground text-sm">
+                    <span className="text-muted-foreground/70 uppercase tracking-wide mr-2">For:</span>
                     {idea.targetUser}
                   </p>
                 </div>
 
-                {/* Tags and Source - Horizontal layout */}
+                {/* Tags and Source */}
                 <div className="flex items-center justify-between">
-                  <div className="flex flex-wrap gap-2">
-                    {idea.tags.slice(0, 3).map(tag => <Badge key={tag} variant="secondary" className="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-light border-0">
+                  <div className="flex flex-wrap gap-1.5">
+                    {idea.tags.slice(0, 3).map((tag) => (
+                      <Badge
+                        key={tag}
+                        variant="secondary"
+                        className="bg-secondary text-secondary-foreground text-xs border-0"
+                      >
                         {tag}
-                      </Badge>)}
+                      </Badge>
+                    ))}
                   </div>
 
                   {/* Source */}
-                  <div className="flex items-center gap-3 text-xs text-gray-400 dark:text-gray-500">
-                    <span className="capitalize font-light">{idea.sourceType}</span>
-                    <button onClick={() => window.open(idea.source, '_blank')} className="hover:text-gray-600 dark:hover:text-gray-300 underline font-light">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                    <span className="capitalize">{idea.sourceType}</span>
+                    <button
+                      onClick={() => window.open(idea.source, '_blank')}
+                      className="hover:text-foreground underline transition-colors"
+                    >
                       View source
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Bookmark - Fixed width */}
+              {/* Bookmark */}
               <div className="w-8 flex-shrink-0 flex justify-end">
-                <Button variant="ghost" size="sm" onClick={() => onToggleBookmark(idea.id)} className={`h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity ${bookmarkedIds.includes(idea.id) ? 'text-gray-900 dark:text-white opacity-100' : 'text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white'}`}>
-                  <Plus className={`h-4 w-4 transform transition-transform ${bookmarkedIds.includes(idea.id) ? 'rotate-45' : ''}`} />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onToggleBookmark(idea.id)}
+                  className={`h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity ${
+                    bookmarkedIds.includes(idea.id)
+                      ? 'text-foreground opacity-100'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <Plus className={`h-4 w-4 transform transition-transform ${
+                    bookmarkedIds.includes(idea.id) ? 'rotate-45' : ''
+                  }`} />
                 </Button>
               </div>
             </div>
-          </div>)}
+          </div>
+        ))}
       </div>
 
-      {/* Load more button for infinite scroll */}
-      {hasMore && <div className="flex justify-center mt-12">
-          <Button onClick={loadMore} variant="outline" className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500">
+      {/* Load more button */}
+      {hasMore && (
+        <div className="flex justify-center mt-12">
+          <Button
+            onClick={loadMore}
+            variant="outline"
+            className="bg-background border-border hover:bg-accent text-foreground"
+          >
             Load More Ideas
           </Button>
-        </div>}
-    </section>;
+        </div>
+      )}
+    </section>
+  );
 };
