@@ -5,7 +5,7 @@ import { SearchFilters } from '@/components/SearchFilters';
 import { IdeaList } from '@/components/IdeaList';
 import { EmailSignup } from '@/components/EmailSignup';
 import { Footer } from '@/components/Footer';
-import { mockIdeas } from '@/data/mockIdeas';
+import { useIdeas } from '@/hooks/useIdeas';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useBookmarks } from '@/contexts/BookmarkContext';
@@ -18,17 +18,18 @@ const Index = () => {
   
   const { toggleTheme } = useTheme();
   const { bookmarkedIds, toggleBookmark } = useBookmarks();
+  const { data: ideas = [], isLoading, error } = useIdeas();
 
   // Get all unique tags from ideas
   const allTags = useMemo(() => {
     const tags = new Set<string>();
-    mockIdeas.forEach(idea => idea.tags.forEach(tag => tags.add(tag)));
+    ideas.forEach(idea => idea.tags.forEach(tag => tags.add(tag)));
     return Array.from(tags).sort().slice(0, 8); // Show only first 8 tags for cleaner look
-  }, []);
+  }, [ideas]);
 
   // Filter and sort ideas
   const filteredAndSortedIdeas = useMemo(() => {
-    let filtered = mockIdeas.filter(idea => {
+    let filtered = ideas.filter(idea => {
       const matchesSearch = searchTerm === '' || 
         idea.problem.toLowerCase().includes(searchTerm.toLowerCase()) ||
         idea.mvpSuggestion.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -58,7 +59,7 @@ const Index = () => {
     });
 
     return filtered;
-  }, [searchTerm, selectedTags, sourceFilter, sortBy]);
+  }, [ideas, searchTerm, selectedTags, sourceFilter, sortBy]);
 
   const toggleTag = (tag: string) => {
     setSelectedTags(prev => 
@@ -84,6 +85,10 @@ const Index = () => {
     onToggleTheme: toggleTheme,
     onClearFilters: clearFilters
   });
+
+  if (error) {
+    console.error('Error loading ideas:', error);
+  }
 
   return (
     <div className="min-h-screen bg-background transition-colors">
@@ -113,11 +118,19 @@ const Index = () => {
         setSourceFilter={setSourceFilter}
       />
       <div className="w-full px-4 sm:px-6">
-        <IdeaList
-          ideas={filteredAndSortedIdeas}
-          bookmarkedIds={bookmarkedIds}
-          onToggleBookmark={toggleBookmark}
-        />
+        {isLoading ? (
+          <div className="w-full py-16 sm:py-24 bg-background">
+            <div className="text-left">
+              <p className="text-muted-foreground text-base sm:text-lg">Loading ideas...</p>
+            </div>
+          </div>
+        ) : (
+          <IdeaList
+            ideas={filteredAndSortedIdeas}
+            bookmarkedIds={bookmarkedIds}
+            onToggleBookmark={toggleBookmark}
+          />
+        )}
       </div>
       <div className="w-full px-4 sm:px-6">
         <EmailSignup />
