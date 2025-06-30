@@ -38,18 +38,18 @@ export const IdeaList = ({ ideas, bookmarkedIds, onToggleBookmark }: IdeaListPro
         {ideas.map((idea) => (
           <div 
             key={idea.id} 
-            className="py-12 border-b border-gray-100 last:border-b-0 group"
+            className="py-8 border-b border-gray-100 last:border-b-0 group"
           >
-            <div className="grid grid-cols-12 gap-8 items-start">
-              {/* Date */}
-              <div className="col-span-2">
+            <div className="flex gap-8 items-start">
+              {/* Date - Fixed width */}
+              <div className="w-20 flex-shrink-0">
                 <div className="text-sm text-gray-400 font-light">
                   {idea.timestamp}
                 </div>
               </div>
 
-              {/* Main Content */}
-              <div className="col-span-9 space-y-6">
+              {/* Main Content - Takes remaining space */}
+              <div className="flex-1 min-w-0 space-y-4">
                 {/* Problem */}
                 <div>
                   <h3 className="text-xl font-light text-gray-900 leading-relaxed mb-3">
@@ -68,33 +68,35 @@ export const IdeaList = ({ ideas, bookmarkedIds, onToggleBookmark }: IdeaListPro
                   </p>
                 </div>
 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2">
-                  {idea.tags.slice(0, 3).map(tag => (
-                    <Badge 
-                      key={tag} 
-                      variant="secondary"
-                      className="bg-gray-50 text-gray-600 text-xs font-light border-0"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
+                {/* Tags and Source - Horizontal layout */}
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap gap-2">
+                    {idea.tags.slice(0, 3).map(tag => (
+                      <Badge 
+                        key={tag} 
+                        variant="secondary"
+                        className="bg-gray-50 text-gray-600 text-xs font-light border-0"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
 
-                {/* Source */}
-                <div className="flex items-center gap-3 text-xs text-gray-400">
-                  <span className="capitalize font-light">{idea.sourceType}</span>
-                  <button 
-                    onClick={() => window.open(idea.source, '_blank')}
-                    className="hover:text-gray-600 underline font-light"
-                  >
-                    View source
-                  </button>
+                  {/* Source */}
+                  <div className="flex items-center gap-3 text-xs text-gray-400">
+                    <span className="capitalize font-light">{idea.sourceType}</span>
+                    <button 
+                      onClick={() => window.open(idea.source, '_blank')}
+                      className="hover:text-gray-600 underline font-light"
+                    >
+                      View source
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {/* Bookmark */}
-              <div className="col-span-1 flex justify-end">
+              {/* Bookmark - Fixed width */}
+              <div className="w-8 flex-shrink-0 flex justify-end">
                 <Button
                   variant="ghost"
                   size="sm"
