@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -15,6 +14,14 @@ serve(async (req) => {
 
   try {
     console.log('Starting fetch ideas process...');
+
+    // Validate environment variables
+    const requiredEnv = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'GEMINI_API_KEY', 'SUBREDDITS', 'HN_FILTER'];
+    for (const v of requiredEnv) {
+      if (!Deno.env.get(v)) {
+        throw new Error(`Missing required environment variable: ${v}`);
+      }
+    }
     
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -34,6 +41,13 @@ serve(async (req) => {
             'User-Agent': 'ideaohm/1.0'
           }
         });
+        
+        if (!redditResponse.ok) {
+          console.error(`Reddit API error for r/${sub}: ${redditResponse.status} ${redditResponse.statusText}`);
+          const errorBody = await redditResponse.text();
+          console.error('Response body:', errorBody);
+          continue; // Skip to the next subreddit
+        }
         
         if (redditResponse.ok) {
           const redditData = await redditResponse.json();
@@ -62,7 +76,11 @@ serve(async (req) => {
         `https://hn.algolia.com/api/v1/search_by_date?tags=${hnFilter}&numericFilters=points>10&hitsPerPage=10`
       );
       
-      if (hnResponse.ok) {
+      if (!hnResponse.ok) {
+        console.error(`Hacker News API error: ${hnResponse.status} ${hnResponse.statusText}`);
+        const errorBody = await hnResponse.text();
+        console.error('Response body:', errorBody);
+      } else if (hnResponse.ok) {
         const hnData = await hnResponse.json();
         hnData.hits?.forEach((hit: any) => {
           ideas.push({
@@ -79,8 +97,8 @@ serve(async (req) => {
 
     console.log(`Collected ${ideas.length} total ideas`);
 
-    // Filter ideas based on keywords
-    const regex = /(how do i|is there a|pain|problem|struggle|tool|looking for|need|help|solution)/i;
+    // Filter ideas based on keywords - looking for questions or discussions
+    const regex = /(\?|how to|what are|best way to)/i;
     const filteredIdeas = ideas.filter(idea => 
       regex.test((idea.title + ' ' + idea.body).toLowerCase())
     );
@@ -196,16 +214,26 @@ Return only valid JSON, no additional text.`
       return null;
     }
     
-    // Try to parse JSON from the response
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
+    // Clean the text and extract the JSON object
+    try {
+      // Find the start and end of the JSON object
+      const startIndex = text.indexOf('{');
+      const endIndex = text.lastIndexOf('}');
+      
+      if (startIndex === -1 || endIndex === -1 || endIndex < startIndex) {
+        console.error('No valid JSON object found in Gemini response:', text);
+        return null;
+      }
+      
+      const jsonString = text.substring(startIndex, endIndex + 1);
+      return JSON.parse(jsonString);
+    } catch (e) {
+      console.error('Failed to parse JSON from Gemini response:', e.message);
+      console.error('Raw Gemini response text:', text);
+      return null;
     }
-    
-    return JSON.parse(text);
-    
-  } catch (error) {
-    console.error('Error calling Gemini API:', error);
+  } catch (e) {
+    console.error(`Gemini API call failed: ${e.message}`);
     return null;
   }
 }

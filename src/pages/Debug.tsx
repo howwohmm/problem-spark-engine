@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -97,7 +96,7 @@ const Debug = () => {
                 {testResults.supabase.success ? (
                   <div>
                     <p>Found {testResults.supabase.count} ideas in database</p>
-                    {testResults.supabase.sample && testResults.subabase.sample.length > 0 && (
+                    {testResults.supabase.sample && testResults.supabase.sample.length > 0 && (
                       <details className="mt-2">
                         <summary>Sample data:</summary>
                         <pre className="text-xs mt-2 bg-gray-100 p-2 rounded">
