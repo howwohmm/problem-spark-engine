@@ -13,6 +13,7 @@ serve(async (req) => {
   }
 
   try {
+    console.log('--- CANARY: FUNCTION EXECUTION STARTED ---');
     console.log('Starting fetch ideas process...');
     
     // --- NETWORK TEST ---
