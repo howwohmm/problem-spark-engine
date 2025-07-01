@@ -4,7 +4,10 @@
   "include": ["supabase/functions/**/*.ts"],
   "compilerOptions": {
     "composite": true,
-    "lib": ["es2020", "dom"],
-    "types": []
+    "lib": ["es2020", "dom", "deno.ns", "deno.unstable"],
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "types": ["https://deno.land/x/xhr@0.1.0/mod.ts"]
   }
 }
