@@ -22,11 +22,7 @@ interface IdeaListProps {
   onToggleBookmark: (ideaId: string) => void;
 }
 
-export const IdeaList = ({
-  ideas,
-  bookmarkedIds,
-  onToggleBookmark
-}: IdeaListProps) => {
+export const IdeaList = ({ ideas }: IdeaListProps) => {
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
   
   const {
@@ -78,7 +74,7 @@ export const IdeaList = ({
 
                 {/* Main Content */}
                 <div className="flex-1 min-w-0 space-y-3">
-                  {/* Problem (Title) - Always visible */}
+                  {/* Problem (Title) */}
                   <div>
                     <h3 className="text-base sm:text-lg font-medium text-foreground leading-relaxed">
                       {idea.problem}
@@ -93,10 +89,10 @@ export const IdeaList = ({
                     </div>
                   )}
 
-                  {/* Expandable content - Only show when expanded */}
+                  {/* Expandable content */}
                   {isExpanded && (
                     <div className="space-y-3 animate-in slide-in-from-top-2 duration-200">
-                      {/* Description (MVP Suggestion) */}
+                      {/* Description */}
                       <div>
                         <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                           {idea.mvpSuggestion}
@@ -111,7 +107,7 @@ export const IdeaList = ({
                         </p>
                       </div>
 
-                      {/* Mobile Date and Source Row */}
+                      {/* Mobile Date and Source */}
                       <div className="flex sm:hidden items-center justify-between text-xs text-muted-foreground">
                         <span>{idea.timestamp}</span>
                         <div className="flex items-center gap-2">
@@ -139,7 +135,7 @@ export const IdeaList = ({
                         ))}
                       </div>
 
-                      {/* Desktop Source - Hidden on mobile */}
+                      {/* Desktop Source */}
                       <div className="hidden sm:flex items-center justify-between">
                         <div></div>
                         <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -157,7 +153,7 @@ export const IdeaList = ({
                   )}
                 </div>
 
-                {/* Only Expand/Collapse button - Removed redundant bookmark button */}
+                {/* Expand/Collapse button */}
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <Button
                     variant="ghost"

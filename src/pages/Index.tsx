@@ -1,5 +1,5 @@
-import { useState, useMemo, useRef } from 'react';
-import { HeroSection } from '@/components/HeroSection';
+
+import { useState, useMemo } from 'react';
 import { SearchFilters } from '@/components/SearchFilters';
 import { IdeaList } from '@/components/IdeaList';
 import { EmailSignup } from '@/components/EmailSignup';
@@ -7,7 +7,7 @@ import { Footer } from '@/components/Footer';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useBookmarks } from '@/contexts/BookmarkContext';
-import { mockIdeas } from '@/data/mockIdeas'; // Import mock data
+import { mockIdeas } from '@/data/mockIdeas';
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,13 +17,15 @@ const Index = () => {
   
   const { toggleTheme } = useTheme();
   const { bookmarkedIds, toggleBookmark } = useBookmarks();
-  const { data: ideas = [], isLoading, error } = { data: mockIdeas, isLoading: false, error: null }; // Use mock data
+  
+  // Use mock data directly
+  const ideas = mockIdeas;
 
   // Get all unique tags from ideas
   const allTags = useMemo(() => {
     const tags = new Set<string>();
     ideas.forEach(idea => idea.tags.forEach(tag => tags.add(tag)));
-    return Array.from(tags).sort().slice(0, 8); // Show only first 8 tags for cleaner look
+    return Array.from(tags).sort().slice(0, 8);
   }, [ideas]);
 
   // Filter and sort ideas
@@ -49,7 +51,6 @@ const Index = () => {
         case 'oldest':
           return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
         case 'popular':
-          // For now, sort by number of tags as a proxy for popularity
           return b.tags.length - a.tags.length;
         case 'newest':
         default:
@@ -85,12 +86,9 @@ const Index = () => {
     onClearFilters: clearFilters
   });
 
-  if (error) {
-    console.error('Error loading ideas:', error);
-  }
-
   return (
     <div className="min-h-screen bg-background transition-colors">
+      {/* Hero Section */}
       <div className="w-full px-4 sm:px-6 py-8 sm:py-12">
         <div className="max-w-none">
           <h1 className="text-4xl sm:text-6xl font-bold text-foreground mb-3 sm:mb-4">
@@ -104,6 +102,8 @@ const Index = () => {
           </p>
         </div>
       </div>
+
+      {/* Search and Filters */}
       <SearchFilters
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -116,24 +116,22 @@ const Index = () => {
         sourceFilter={sourceFilter}
         setSourceFilter={setSourceFilter}
       />
+
+      {/* Ideas List */}
       <div className="w-full px-4 sm:px-6">
-        {isLoading ? (
-          <div className="w-full py-16 sm:py-24 bg-background">
-            <div className="text-left">
-              <p className="text-muted-foreground text-base sm:text-lg">Loading ideas...</p>
-            </div>
-          </div>
-        ) : (
-          <IdeaList
-            ideas={filteredAndSortedIdeas}
-            bookmarkedIds={bookmarkedIds}
-            onToggleBookmark={toggleBookmark}
-          />
-        )}
+        <IdeaList
+          ideas={filteredAndSortedIdeas}
+          bookmarkedIds={bookmarkedIds}
+          onToggleBookmark={toggleBookmark}
+        />
       </div>
+
+      {/* Email Signup */}
       <div className="w-full px-4 sm:px-6">
         <EmailSignup />
       </div>
+
+      {/* Footer */}
       <div className="w-full px-4 sm:px-6">
         <Footer />
       </div>
