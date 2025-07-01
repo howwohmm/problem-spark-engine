@@ -14,6 +14,16 @@ serve(async (req) => {
 
   try {
     console.log('Starting fetch ideas process...');
+    
+    // --- NETWORK TEST ---
+    try {
+      console.log('--- Performing outbound network test to GitHub ---');
+      const testResponse = await fetch('https://api.github.com');
+      console.log(`--- Network test status: ${testResponse.status} ---`);
+    } catch (e) {
+      console.error('--- NETWORK TEST FAILED ---', e.message);
+    }
+    // --------------------
 
     // Validate environment variables
     const requiredEnv = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'GEMINI_API_KEY', 'SUBREDDITS', 'HN_FILTER'];
