@@ -1,11 +1,10 @@
+
 {
   "extends": "./tsconfig.json",
   "include": ["supabase/functions/**/*.ts"],
   "compilerOptions": {
     "composite": true,
-    "lib": ["es2020", "deno.ns"],
-    "types": [
-      "https://deno.land/x/service_worker@0.1.0/lib/service_worker.d.ts"
-    ]
+    "lib": ["es2020", "dom"],
+    "types": []
   }
-} 
+}

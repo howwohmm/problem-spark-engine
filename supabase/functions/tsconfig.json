@@ -1,3 +1,4 @@
+
 {
   "compilerOptions": {
     "target": "esnext",
@@ -7,10 +8,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": [
-      "https://deno.land/x/service_worker@0.1.0/lib/service_worker.d.ts",
-      "https://esm.sh/@supabase/supabase-js@2"
-    ]
+    "types": []
   },
   "include": ["**/*.ts"]
-} 
+}
