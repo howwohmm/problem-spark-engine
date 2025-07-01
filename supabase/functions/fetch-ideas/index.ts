@@ -52,6 +52,7 @@ serve(async (req) => {
         if (redditResponse.ok) {
           const redditData = await redditResponse.json();
           const posts = redditData.data?.children || [];
+          console.log(`Received ${posts.length} posts from Reddit r/${sub}.`);
           
           posts.forEach((post: any) => {
             const p = post.data;
@@ -71,9 +72,9 @@ serve(async (req) => {
     // Hacker News API calls
     console.log('Fetching from Hacker News...');
     try {
-      const hnFilter = Deno.env.get('HN_FILTER') || 'ask_hn';
+      const hnFilter = Deno.env.get('HN_FILTER') || '(story,ask_hn)';
       const hnResponse = await fetch(
-        `https://hn.algolia.com/api/v1/search_by_date?tags=${hnFilter}&numericFilters=points>10&hitsPerPage=10`
+        `https://hn.algolia.com/api/v1/search_by_date?tags=${hnFilter}&hitsPerPage=20`
       );
       
       if (!hnResponse.ok) {
@@ -82,7 +83,9 @@ serve(async (req) => {
         console.error('Response body:', errorBody);
       } else if (hnResponse.ok) {
         const hnData = await hnResponse.json();
-        hnData.hits?.forEach((hit: any) => {
+        const hits = hnData.hits || [];
+        console.log(`Received ${hits.length} hits from Hacker News.`);
+        hits.forEach((hit: any) => {
           ideas.push({
             title: hit.title || '',
             body: hit.comment_text || hit.story_text || '',
