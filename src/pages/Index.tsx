@@ -1,14 +1,13 @@
-
 import { useState, useMemo, useRef } from 'react';
 import { HeroSection } from '@/components/HeroSection';
 import { SearchFilters } from '@/components/SearchFilters';
 import { IdeaList } from '@/components/IdeaList';
 import { EmailSignup } from '@/components/EmailSignup';
 import { Footer } from '@/components/Footer';
-import { useIdeas } from '@/hooks/useIdeas';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useBookmarks } from '@/contexts/BookmarkContext';
+import { mockIdeas } from '@/data/mockIdeas'; // Import mock data
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,7 +17,7 @@ const Index = () => {
   
   const { toggleTheme } = useTheme();
   const { bookmarkedIds, toggleBookmark } = useBookmarks();
-  const { data: ideas = [], isLoading, error } = useIdeas();
+  const { data: ideas = [], isLoading, error } = { data: mockIdeas, isLoading: false, error: null }; // Use mock data
 
   // Get all unique tags from ideas
   const allTags = useMemo(() => {
