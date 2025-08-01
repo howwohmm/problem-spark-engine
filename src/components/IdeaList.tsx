@@ -1,8 +1,9 @@
 
-import { Plus, X, ExternalLink } from 'lucide-react';
+import { Plus, X, ExternalLink, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { formatRelativeTime } from '@/lib/dateUtils';
 import { useState } from 'react';
 
 interface Idea {
@@ -22,7 +23,7 @@ interface IdeaListProps {
   onToggleBookmark: (ideaId: string) => void;
 }
 
-export const IdeaList = ({ ideas }: IdeaListProps) => {
+export const IdeaList = ({ ideas, bookmarkedIds, onToggleBookmark }: IdeaListProps) => {
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
   
   const {
@@ -68,7 +69,7 @@ export const IdeaList = ({ ideas }: IdeaListProps) => {
                 {/* Date - Hidden on mobile */}
                 <div className="hidden sm:block w-16 flex-shrink-0">
                   <div className="text-xs text-muted-foreground">
-                    {idea.timestamp}
+                    {formatRelativeTime(idea.timestamp)}
                   </div>
                 </div>
 
@@ -84,7 +85,7 @@ export const IdeaList = ({ ideas }: IdeaListProps) => {
                   {/* Mobile Date and Source Row - Only when collapsed */}
                   {!isExpanded && (
                     <div className="flex sm:hidden items-center justify-between text-xs text-muted-foreground">
-                      <span>{idea.timestamp}</span>
+                      <span>{formatRelativeTime(idea.timestamp)}</span>
                       <span className="capitalize">{idea.sourceType}</span>
                     </div>
                   )}
@@ -109,7 +110,7 @@ export const IdeaList = ({ ideas }: IdeaListProps) => {
 
                       {/* Mobile Date and Source */}
                       <div className="flex sm:hidden items-center justify-between text-xs text-muted-foreground">
-                        <span>{idea.timestamp}</span>
+                        <span>{formatRelativeTime(idea.timestamp)}</span>
                         <div className="flex items-center gap-2">
                           <span className="capitalize">{idea.sourceType}</span>
                           <button
@@ -153,8 +154,20 @@ export const IdeaList = ({ ideas }: IdeaListProps) => {
                   )}
                 </div>
 
-                {/* Expand/Collapse button */}
+                {/* Bookmark and Expand/Collapse buttons */}
                 <div className="flex items-center gap-2 flex-shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onToggleBookmark(idea.id)}
+                    className={`h-8 w-8 p-0 transition-colors ${
+                      bookmarkedIds.includes(idea.id) 
+                        ? 'text-yellow-500 hover:text-yellow-600' 
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <Bookmark className={`h-4 w-4 ${bookmarkedIds.includes(idea.id) ? 'fill-current' : ''}`} />
+                  </Button>
                   <Button
                     variant="ghost"
                     size="sm"

@@ -5,10 +5,10 @@ export const mockIdeas = [
     problem: 'Developers struggle to automatically announce their GitHub releases on social media platforms',
     targetUser: 'Open-source maintainers and indie developers',
     mvpSuggestion: 'A webhook service that automatically posts GitHub release notes to Twitter/X, LinkedIn, and other social platforms with customizable templates.',
-    source: 'https://news.ycombinator.com/item?id=example1',
+    source: 'https://news.ycombinator.com/item?id=38920043',
     sourceType: 'hackernews' as const,
     tags: ['DevTools', 'Automation', 'Social Media'],
-    timestamp: '2 hours ago'
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
   },
   {
     id: '2',
@@ -18,7 +18,7 @@ export const mockIdeas = [
     source: 'https://reddit.com/r/entrepreneur/example2',
     sourceType: 'reddit' as const,
     tags: ['Social Media', 'Automation', 'Small Business'],
-    timestamp: '4 hours ago'
+    timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString()
   },
   {
     id: '3',
@@ -28,7 +28,7 @@ export const mockIdeas = [
     source: 'https://reddit.com/r/remotework/example3',
     sourceType: 'reddit' as const,
     tags: ['Remote Work', 'Team Building', 'Productivity'],
-    timestamp: '6 hours ago'
+    timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()
   },
   {
     id: '4',
@@ -38,7 +38,7 @@ export const mockIdeas = [
     source: 'https://news.ycombinator.com/item?id=example4',
     sourceType: 'hackernews' as const,
     tags: ['AI', 'Content Creation', 'Marketing'],
-    timestamp: '8 hours ago'
+    timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString()
   },
   {
     id: '5',
@@ -48,7 +48,7 @@ export const mockIdeas = [
     source: 'https://reddit.com/r/freelance/example5',
     sourceType: 'reddit' as const,
     tags: ['Productivity', 'Freelance', 'Time Tracking'],
-    timestamp: '12 hours ago'
+    timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
   },
   {
     id: '6',
@@ -58,7 +58,7 @@ export const mockIdeas = [
     source: 'https://news.ycombinator.com/item?id=example6',
     sourceType: 'hackernews' as const,
     tags: ['AI', 'Sales', 'Email Marketing'],
-    timestamp: '1 day ago'
+    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
   },
   {
     id: '7',
@@ -68,7 +68,7 @@ export const mockIdeas = [
     source: 'https://reddit.com/r/parenting/example7',
     sourceType: 'reddit' as const,
     tags: ['EdTech', 'Parenting', 'Mobile App'],
-    timestamp: '1 day ago'
+    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
   },
   {
     id: '8',
@@ -78,7 +78,7 @@ export const mockIdeas = [
     source: 'https://reddit.com/r/gamedev/example8',
     sourceType: 'reddit' as const,
     tags: ['Gaming', 'User Research', 'Community'],
-    timestamp: '2 days ago'
+    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
   },
   {
     id: '9',
@@ -88,7 +88,7 @@ export const mockIdeas = [
     source: 'https://news.ycombinator.com/item?id=example9',
     sourceType: 'hackernews' as const,
     tags: ['AI', 'Food Tech', 'Sustainability'],
-    timestamp: '2 days ago'
+    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
   },
   {
     id: '10',
@@ -98,7 +98,7 @@ export const mockIdeas = [
     source: 'https://reddit.com/r/jobs/example10',
     sourceType: 'reddit' as const,
     tags: ['AI', 'Career', 'HR Tech'],
-    timestamp: '3 days ago'
+    timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
   },
   {
     id: '11',
@@ -108,7 +108,7 @@ export const mockIdeas = [
     source: 'https://news.ycombinator.com/item?id=example11',
     sourceType: 'hackernews' as const,
     tags: ['Audio', 'Content Creation', 'Search'],
-    timestamp: '3 days ago'
+    timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
   },
   {
     id: '12',
@@ -118,6 +118,6 @@ export const mockIdeas = [
     source: 'https://reddit.com/r/ecommerce/example12',
     sourceType: 'reddit' as const,
     tags: ['AI', 'E-commerce', 'Personalization'],
-    timestamp: '4 days ago'
+    timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString()
   }
 ];

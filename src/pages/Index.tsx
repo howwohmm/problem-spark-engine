@@ -1,5 +1,5 @@
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { SearchFilters } from '@/components/SearchFilters';
 import { IdeaList } from '@/components/IdeaList';
 import { EmailSignup } from '@/components/EmailSignup';
@@ -7,6 +7,7 @@ import { Footer } from '@/components/Footer';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useBookmarks } from '@/contexts/BookmarkContext';
+import { apiService, type ApiIdea } from '@/services/apiService';
 import { mockIdeas } from '@/data/mockIdeas';
 
 const Index = () => {
@@ -14,12 +15,32 @@ const Index = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('newest');
   const [sourceFilter, setSourceFilter] = useState<string[]>([]);
+  const [ideas, setIdeas] = useState<ApiIdea[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   const { toggleTheme } = useTheme();
   const { bookmarkedIds, toggleBookmark } = useBookmarks();
   
-  // Use mock data directly
-  const ideas = mockIdeas;
+  // Fetch ideas from API, fallback to mock data
+  useEffect(() => {
+    const fetchIdeas = async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.fetchIdeas();
+        setIdeas(response.ideas);
+        setError(null);
+      } catch (err) {
+        console.warn('API failed, using mock data:', err);
+        setIdeas(mockIdeas as ApiIdea[]);
+        setError('Using demo data - API unavailable');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchIdeas();
+  }, []);
 
   // Get all unique tags from ideas
   const allTags = useMemo(() => {
@@ -119,11 +140,17 @@ const Index = () => {
 
       {/* Ideas List */}
       <div className="w-full px-4 sm:px-6">
-        <IdeaList
-          ideas={filteredAndSortedIdeas}
-          bookmarkedIds={bookmarkedIds}
-          onToggleBookmark={toggleBookmark}
-        />
+                {loading ? (
+          <div className="text-center py-8">Loading ideas...</div>
+        ) : error ? (
+          <div className="text-center py-8 text-yellow-600">{error}</div>
+        ) : (
+          <IdeaList 
+            ideas={filteredAndSortedIdeas}
+            bookmarkedIds={bookmarkedIds}
+            onToggleBookmark={toggleBookmark}
+          />
+        )}
       </div>
 
       {/* Email Signup */}

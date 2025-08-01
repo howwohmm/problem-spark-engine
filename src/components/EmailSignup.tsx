@@ -8,15 +8,31 @@ export const EmailSignup = () => {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      console.log('Email signup:', email);
-      setIsSubmitted(true);
-      setTimeout(() => {
-        setIsSubmitted(false);
-        setEmail('');
-      }, 3000);
+      try {
+        // Using Formspree for email collection (free tier)
+        const response = await fetch('https://formspree.io/f/xkgnpzqd', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, source: 'problem-spark-engine' }),
+        });
+        
+        if (response.ok) {
+          setIsSubmitted(true);
+          setTimeout(() => {
+            setIsSubmitted(false);
+            setEmail('');
+          }, 3000);
+        } else {
+          console.error('Email signup failed');
+        }
+      } catch (error) {
+        console.error('Email signup error:', error);
+      }
     }
   };
 
