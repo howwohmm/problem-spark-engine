@@ -31,22 +31,23 @@ const Index = () => {
           sortBy: sortBy as 'newest' | 'oldest' | 'popular'
         });
         
-        // Transform the data to match the expected format
-        const transformedIdeas = response.ideas.map(idea => ({
-          ...idea,
-          targetUser: idea.target_user,
-          mvpSuggestion: idea.mvp_suggestion,
-          source: idea.source_url,
-          sourceType: idea.source_platform,
-          timestamp: idea.created_at,
-          confidence: idea.confidence_score
-        }));
-        
-        setIdeas(transformedIdeas);
+        setIdeas(response.ideas);
         setError(null);
       } catch (err) {
         console.warn('Supabase failed, using mock data:', err);
-        setIdeas(mockIdeas as ApiIdea[]);
+        // Transform mock data to match ApiIdea interface
+        const transformedMockIdeas = mockIdeas.map(idea => ({
+          id: idea.id,
+          problem: idea.problem,
+          target_user: idea.targetUser,
+          mvp_suggestion: idea.mvpSuggestion,
+          source_url: idea.source,
+          source_platform: idea.sourceType as 'reddit' | 'hackernews' | 'twitter',
+          tags: idea.tags,
+          created_at: idea.timestamp,
+          confidence_score: idea.confidence
+        }));
+        setIdeas(transformedMockIdeas as ApiIdea[]);
         setError('Using demo data - Database connection failed');
       } finally {
         setLoading(false);
@@ -68,14 +69,14 @@ const Index = () => {
     let filtered = ideas.filter(idea => {
       const matchesSearch = searchTerm === '' || 
         idea.problem.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (idea.mvp_suggestion || idea.mvpSuggestion || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (idea.target_user || idea.targetUser || '').toLowerCase().includes(searchTerm.toLowerCase());
+        (idea.mvp_suggestion || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (idea.target_user || '').toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesTags = selectedTags.length === 0 || 
         selectedTags.some(tag => idea.tags.includes(tag));
       
       const matchesSource = sourceFilter.length === 0 ||
-        sourceFilter.includes(idea.source_platform || idea.sourceType);
+        sourceFilter.includes(idea.source_platform);
       
       return matchesSearch && matchesTags && matchesSource;
     });
@@ -84,12 +85,12 @@ const Index = () => {
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'oldest':
-          return new Date(a.created_at || a.timestamp).getTime() - new Date(b.created_at || b.timestamp).getTime();
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
         case 'popular':
-          return (b.confidence_score || b.confidence || 0) - (a.confidence_score || a.confidence || 0);
+          return (b.confidence_score || 0) - (a.confidence_score || 0);
         case 'newest':
         default:
-          return new Date(b.created_at || b.timestamp).getTime() - new Date(a.created_at || a.timestamp).getTime();
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       }
     });
 
@@ -163,12 +164,12 @@ const Index = () => {
             ideas={filteredAndSortedIdeas.map(idea => ({
               id: idea.id,
               problem: idea.problem,
-              targetUser: idea.target_user || idea.targetUser || '',
-              mvpSuggestion: idea.mvp_suggestion || idea.mvpSuggestion || '',
-              source: idea.source_url || idea.source || '',
-              sourceType: idea.source_platform || idea.sourceType,
+              targetUser: idea.target_user || '',
+              mvpSuggestion: idea.mvp_suggestion || '',
+              source: idea.source_url || '',
+              sourceType: idea.source_platform,
               tags: idea.tags,
-              timestamp: idea.created_at || idea.timestamp
+              timestamp: idea.created_at
             }))}
             bookmarkedIds={bookmarkedIds}
             onToggleBookmark={toggleBookmark}
