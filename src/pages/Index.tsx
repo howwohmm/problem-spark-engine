@@ -22,25 +22,39 @@ const Index = () => {
   const { toggleTheme } = useTheme();
   const { bookmarkedIds, toggleBookmark } = useBookmarks();
   
-  // Fetch ideas from API, fallback to mock data
+  // Fetch ideas from Supabase, fallback to mock data
   useEffect(() => {
     const fetchIdeas = async () => {
       try {
         setLoading(true);
-        const response = await apiService.fetchIdeas();
-        setIdeas(response.ideas);
+        const response = await apiService.fetchIdeas({
+          sortBy: sortBy as 'newest' | 'oldest' | 'popular'
+        });
+        
+        // Transform the data to match the expected format
+        const transformedIdeas = response.ideas.map(idea => ({
+          ...idea,
+          targetUser: idea.target_user,
+          mvpSuggestion: idea.mvp_suggestion,
+          source: idea.source_url,
+          sourceType: idea.source_platform,
+          timestamp: idea.created_at,
+          confidence: idea.confidence_score
+        }));
+        
+        setIdeas(transformedIdeas);
         setError(null);
       } catch (err) {
-        console.warn('API failed, using mock data:', err);
+        console.warn('Supabase failed, using mock data:', err);
         setIdeas(mockIdeas as ApiIdea[]);
-        setError('Using demo data - API unavailable');
+        setError('Using demo data - Database connection failed');
       } finally {
         setLoading(false);
       }
     };
 
     fetchIdeas();
-  }, []);
+  }, [sortBy]);
 
   // Get all unique tags from ideas
   const allTags = useMemo(() => {
@@ -54,14 +68,14 @@ const Index = () => {
     let filtered = ideas.filter(idea => {
       const matchesSearch = searchTerm === '' || 
         idea.problem.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        idea.mvpSuggestion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        idea.targetUser.toLowerCase().includes(searchTerm.toLowerCase());
+        (idea.mvp_suggestion || idea.mvpSuggestion || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (idea.target_user || idea.targetUser || '').toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesTags = selectedTags.length === 0 || 
         selectedTags.some(tag => idea.tags.includes(tag));
       
       const matchesSource = sourceFilter.length === 0 ||
-        sourceFilter.includes(idea.sourceType);
+        sourceFilter.includes(idea.source_platform || idea.sourceType);
       
       return matchesSearch && matchesTags && matchesSource;
     });
@@ -70,12 +84,12 @@ const Index = () => {
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'oldest':
-          return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+          return new Date(a.created_at || a.timestamp).getTime() - new Date(b.created_at || b.timestamp).getTime();
         case 'popular':
-          return b.tags.length - a.tags.length;
+          return (b.confidence_score || b.confidence || 0) - (a.confidence_score || a.confidence || 0);
         case 'newest':
         default:
-          return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+          return new Date(b.created_at || b.timestamp).getTime() - new Date(a.created_at || a.timestamp).getTime();
       }
     });
 
@@ -140,13 +154,22 @@ const Index = () => {
 
       {/* Ideas List */}
       <div className="w-full px-4 sm:px-6">
-                {loading ? (
+        {loading ? (
           <div className="text-center py-8">Loading ideas...</div>
         ) : error ? (
           <div className="text-center py-8 text-yellow-600">{error}</div>
         ) : (
           <IdeaList 
-            ideas={filteredAndSortedIdeas}
+            ideas={filteredAndSortedIdeas.map(idea => ({
+              id: idea.id,
+              problem: idea.problem,
+              targetUser: idea.target_user || idea.targetUser || '',
+              mvpSuggestion: idea.mvp_suggestion || idea.mvpSuggestion || '',
+              source: idea.source_url || idea.source || '',
+              sourceType: idea.source_platform || idea.sourceType,
+              tags: idea.tags,
+              timestamp: idea.created_at || idea.timestamp
+            }))}
             bookmarkedIds={bookmarkedIds}
             onToggleBookmark={toggleBookmark}
           />

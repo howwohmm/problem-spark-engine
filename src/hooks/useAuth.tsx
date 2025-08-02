@@ -1,84 +1,101 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-// Placeholder for future Farcaster auth integration
-interface User {
-  id: string;
-  username: string;
-  displayName?: string;
-  pfpUrl?: string;
-  fid?: number; // Farcaster ID
-}
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: User | null;
+  session: Session | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  signIn: () => Promise<void>;
-  signOut: () => void;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, metadata?: any) => Promise<{ error: Error | null }>;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const isAuthenticated = !!user;
+  const isAuthenticated = !!session;
 
-  const signIn = async () => {
-    setIsLoading(true);
+  useEffect(() => {
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.id);
+        setSession(session);
+        setUser(session?.user ?? null);
+        setIsLoading(false);
+      }
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const signIn = async (email: string, password: string) => {
     try {
-      // TODO: Replace with Farcaster SDK auth
-      // Example: const user = await farcasterAuth.signIn();
-      
-      // Placeholder for development
-      console.log('Auth placeholder - ready for Farcaster integration');
-      
-      // Mock user for development (remove when Farcaster is integrated)
-      const mockUser: User = {
-        id: 'dev-user',
-        username: 'developer',
-        displayName: 'Dev User',
-        fid: 12345
-      };
-      setUser(mockUser);
+      setIsLoading(true);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      return { error };
     } catch (error) {
-      console.error('Auth error:', error);
+      return { error: error as Error };
     } finally {
       setIsLoading(false);
     }
   };
 
-  const signOut = () => {
-    setUser(null);
-    localStorage.removeItem('auth-user');
+  const signUp = async (email: string, password: string, metadata?: any) => {
+    try {
+      setIsLoading(true);
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: metadata
+        }
+      });
+      return { error };
+    } catch (error) {
+      return { error: error as Error };
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Persist auth state
-  useEffect(() => {
-    const savedUser = localStorage.getItem('auth-user');
-    if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (error) {
-        console.error('Error parsing saved user:', error);
-        localStorage.removeItem('auth-user');
-      }
+  const signOut = async () => {
+    try {
+      setIsLoading(true);
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    } finally {
+      setIsLoading(false);
     }
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('auth-user', JSON.stringify(user));
-    }
-  }, [user]);
+  };
 
   return (
     <AuthContext.Provider value={{
       user,
+      session,
       isLoading,
       isAuthenticated,
       signIn,
+      signUp,
       signOut
     }}>
       {children}
@@ -93,12 +110,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-// Farcaster Integration Guide (for later):
-// 
-// 1. Install Farcaster SDK: npm install @farcaster/auth-kit
-// 2. Replace signIn function with:
-//    const farcasterConfig = { ... };
-//    const { signIn: farcasterSignIn } = useFarcasterAuth(farcasterConfig);
-// 3. Update User interface to match Farcaster user data
-// 4. Add Farcaster-specific auth components
