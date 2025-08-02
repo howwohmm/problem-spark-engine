@@ -1,8 +1,10 @@
+
 import { useState, useMemo, useEffect } from 'react';
 import { SearchFilters } from '@/components/SearchFilters';
 import { IdeaList } from '@/components/IdeaList';
 import { EmailSignup } from '@/components/EmailSignup';
 import { Footer } from '@/components/Footer';
+import { TriggerScraping } from '@/components/TriggerScraping';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useBookmarks } from '@/contexts/BookmarkContext';
@@ -126,9 +128,12 @@ const Index = () => {
       {/* Hero Section */}
       <div className="w-full px-4 sm:px-6 py-8 sm:py-12">
         <div className="max-w-none">
-          <h1 className="text-4xl sm:text-6xl font-bold text-foreground mb-3 sm:mb-4">
-            Ideas
-          </h1>
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h1 className="text-4xl sm:text-6xl font-bold text-foreground">
+              Ideas
+            </h1>
+            <TriggerScraping />
+          </div>
           <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl">
             Turn community noise into build-ready ideas
           </p>
