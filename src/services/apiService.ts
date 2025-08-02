@@ -6,6 +6,7 @@ interface ApiIdea {
   problem: string;
   target_user: string;
   mvp_suggestion: string;
+  original_description?: string;
   source_url: string;
   source_platform: 'reddit' | 'hackernews' | 'twitter';
   tags: string[];
@@ -33,81 +34,15 @@ interface FetchIdeasParams {
 }
 
 class ApiService {
+  private API_BASE = 'http://localhost:3000/api';
+
   async fetchIdeas(params: FetchIdeasParams = {}): Promise<ApiResponse> {
-    const {
-      page = 1,
-      limit = 10,
-      tags = [],
-      source,
-      search,
-      sortBy = 'newest'
-    } = params;
-
     try {
-      let query = supabase
-        .from('ideas')
-        .select('*', { count: 'exact' })
-        .gte('confidence_score', 0.7);
-
-      // Apply filters
-      if (tags.length > 0) {
-        query = query.overlaps('tags', tags);
+      const response = await fetch(`${this.API_BASE}/ideas`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch ideas');
       }
-
-      if (source) {
-        query = query.eq('source_platform', source);
-      }
-
-      if (search) {
-        query = query.or(`problem.ilike.%${search}%,mvp_suggestion.ilike.%${search}%,target_user.ilike.%${search}%`);
-      }
-
-      // Apply sorting
-      switch (sortBy) {
-        case 'oldest':
-          query = query.order('created_at', { ascending: true });
-          break;
-        case 'popular':
-          query = query.order('confidence_score', { ascending: false });
-          break;
-        case 'newest':
-        default:
-          query = query.order('created_at', { ascending: false });
-          break;
-      }
-
-      // Apply pagination
-      const from = (page - 1) * limit;
-      const to = from + limit - 1;
-      query = query.range(from, to);
-
-      const { data, error, count } = await query;
-
-      if (error) {
-        throw error;
-      }
-
-      const ideas: ApiIdea[] = (data || []).map(row => ({
-        id: row.id,
-        problem: row.problem,
-        target_user: row.target_user || '',
-        mvp_suggestion: row.mvp_suggestion || '',
-        source_url: row.source_url || '',
-        source_platform: row.source_platform as 'reddit' | 'hackernews' | 'twitter',
-        tags: row.tags || [],
-        created_at: row.created_at,
-        confidence_score: row.confidence_score
-      }));
-
-      return {
-        ideas,
-        pagination: {
-          page,
-          limit,
-          total: count || 0,
-          pages: Math.ceil((count || 0) / limit)
-        }
-      };
+      return await response.json();
     } catch (error) {
       console.error('API Error:', error);
       throw new Error(`Failed to fetch ideas: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -116,22 +51,14 @@ class ApiService {
 
   async getAllTags(): Promise<string[]> {
     try {
-      const { data, error } = await supabase
-        .from('ideas')
-        .select('tags')
-        .gte('confidence_score', 0.7)
-        .not('tags', 'is', null);
-
-      if (error) {
-        throw error;
-      }
-
+      const { ideas } = await this.fetchIdeas();
+      
       // Extract and flatten all unique tags
       const allTags = new Set<string>();
       
-      (data || []).forEach(row => {
-        if (row.tags && Array.isArray(row.tags)) {
-          row.tags.forEach((tag: string) => {
+      ideas.forEach(idea => {
+        if (idea.tags && Array.isArray(idea.tags)) {
+          idea.tags.forEach(tag => {
             if (tag && typeof tag === 'string') {
               allTags.add(tag.trim());
             }
@@ -142,27 +69,35 @@ class ApiService {
       return Array.from(allTags).sort();
     } catch (error) {
       console.error('Tags API Error:', error);
-      // Return fallback tags if API fails
+      // Return predefined tags if API fails
       return [
-        'AI', 'DevTools', 'Automation', 'Social Media', 'Small Business',
-        'Productivity', 'E-commerce', 'SaaS', 'Mobile App', 'Web App'
+        'AI/ML', 'Blockchain', 'IoT', 'VR/AR', 'Cloud', 'Mobile', 'Web3', 'API',
+        'SaaS', 'Marketplace', 'Platform', 'B2B', 'B2C', 'Enterprise', 'Subscription', 'Freemium',
+        'FinTech', 'HealthTech', 'EdTech', 'E-commerce', 'Gaming', 'Social Media', 'Productivity',
+        'Security', 'DevTools', 'Legal Tech', 'Real Estate', 'Travel',
+        'Automation', 'Analytics', 'Collaboration', 'Communication', 'Data Management', 'Open Source'
       ];
     }
   }
 
   async triggerScraping(): Promise<{ success: boolean; message: string }> {
     try {
-      // This would call a Supabase Edge Function for scraping
-      const { data, error } = await supabase.functions.invoke('scrape-ideas');
-      
-      if (error) {
-        throw error;
+      const response = await fetch(`${this.API_BASE}/scrape-ideas`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to trigger scraping');
       }
 
-      return data || { success: true, message: 'Scraping triggered successfully' };
+      return await response.json();
     } catch (error) {
       console.error('Scraping trigger error:', error);
-      throw new Error('Failed to trigger scraping');
+      throw error;
     }
   }
 }
