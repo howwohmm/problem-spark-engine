@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2, Play } from 'lucide-react';
 
@@ -11,27 +10,15 @@ export const TriggerScraping = () => {
   const handleTriggerScraping = async () => {
     try {
       setIsLoading(true);
-      console.log('🚀 Triggering scraping function...');
       
-      const { data, error } = await supabase.functions.invoke('scrape-ideas', {
-        body: { scheduled: false }
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      console.log('✅ Scraping response:', data);
-      
-      toast.success(
-        `Scraping complete! Found ${data.scraped || 0} posts, processed ${data.processed || 0} new ideas`,
-        { duration: 5000 }
+      // For now, just show a message that this needs to be set up
+      toast.info(
+        'Scraping is currently set up as a scheduled job. Run "npm run test:scraper" in the terminal to manually fetch new ideas.',
+        { duration: 7000 }
       );
 
-      // Refresh the page after successful scraping
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      // Alternatively, you could make a direct API call to your scraper endpoint
+      // if you set it up as a separate API route
 
     } catch (error) {
       console.error('❌ Scraping error:', error);
