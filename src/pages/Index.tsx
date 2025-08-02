@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from 'react';
 import { SearchFilters } from '@/components/SearchFilters';
 import { IdeaList } from '@/components/IdeaList';
@@ -45,7 +44,7 @@ const Index = () => {
           source_platform: idea.sourceType as 'reddit' | 'hackernews' | 'twitter',
           tags: idea.tags,
           created_at: idea.timestamp,
-          confidence_score: idea.confidence
+          confidence_score: 0.8 // Default confidence score since mock data doesn't have this
         }));
         setIdeas(transformedMockIdeas as ApiIdea[]);
         setError('Using demo data - Database connection failed');
