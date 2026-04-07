@@ -11,6 +11,7 @@ interface Idea {
   problem: string;
   targetUser: string;
   mvpSuggestion: string;
+  original_description?: string;
   source: string;
   sourceType: 'reddit' | 'hackernews' | 'twitter';
   tags: string[];
@@ -93,18 +94,20 @@ export const IdeaList = ({ ideas, bookmarkedIds, onToggleBookmark }: IdeaListPro
                   {/* Expandable content */}
                   {isExpanded && (
                     <div className="space-y-3 animate-in slide-in-from-top-2 duration-200">
-                      {/* Description */}
-                      <div>
-                        <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                          {idea.mvpSuggestion}
-                        </p>
-                      </div>
+                      {/* Original Description */}
+                      {idea.original_description && (
+                        <div>
+                          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                            {idea.original_description}
+                          </p>
+                        </div>
+                      )}
                       
-                      {/* Target User */}
+                      {/* Solution */}
                       <div>
                         <p className="text-xs sm:text-sm text-muted-foreground">
-                          <span className="text-muted-foreground/70 uppercase tracking-wide mr-2">For:</span>
-                          {idea.targetUser}
+                          <span className="text-muted-foreground/70 uppercase tracking-wide mr-2">Solution:</span>
+                          {idea.mvpSuggestion}
                         </p>
                       </div>
 
